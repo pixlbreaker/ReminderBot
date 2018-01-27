@@ -20,7 +20,7 @@ client.on('message', msg => {
 		console.log('Disconnected...');
 		process.exit();
 
-		// Reminds the User
+	// Reminds the User
 	} else if (msg.content.toLowerCase().startsWith('!remindme')) {
 		var message = msg;
 		try {
@@ -29,7 +29,7 @@ client.on('message', msg => {
 			var returntime;
 			var timemeasure;
 			msg = msg.content.split(' ');
-			console.log('Message recieved at ' + Date.now().toString());
+			console.log('Message recieved from ' + message.author.id + ' at ' + Date.now().toString());
 
 			// Sets the return time
 			timemeasure = msg[1].substring((msg[1].length - 1), (msg[1].length))
@@ -68,17 +68,79 @@ client.on('message', msg => {
 				var content = msg.join();
 				content = content.replaceAll(',', ' ');
 				message.reply(content);
-				console.log('Message sent to at ' + Date.now().toString());
+				console.log('Message sent to ' + message.author.id + ' at ' + Date.now().toString());
 			}, returntime)
 		} catch (e) {
 			message.reply("An error has occured, please make sure the command has a time delimiter and message");
 			console.error(e.toString());
 		}
 
-		// List of Commands
-	} else if (msg.content.toLowerCase() === "!reminderbot") {
-		msg.channel.send("Hello I am reminder bot:\n\n!reminderbot - List of all Commands\n!quit - Turns off the bot\n!remindme - {time} {message}\n\t{time} Please have the amount of time be denoted by a time character, for example m - minutes, s - seconds, d - days.\n--- Created and Managed by pixlbreaker ---");
-	}
+	// List of commands
+	}else if (msg.content.toLowerCase() === "!reminderbot") {
+		msg.channel.send("Hello I am reminder bot:\n\n!reminderbot \t\tList of all Commands\n!quit \t\tTurns off the bot\n!remindme \t\t {time} {message}\n\t{time} Please have the amount of time be denoted by a time character.\n\t\tm - minutes, s - seconds, d - days.\n!remind {@User} {time} {message}\n\t{time} Please have the amount of time be denoted by a time character.\n\t\tm - minutes, s - seconds, d - days.\n\t{@User} So far you can use the user's name with the @ symbol.\n\n--- Created and Managed by pixlbreaker ---");
+	
+	// Reminds a specific user
+	} else if (msg.content.toLowerCase().startsWith('!remind')) {
+		var message = msg;
+		try {
+			
+			// Variables
+			var returntime;
+			var timemeasure;
+			var userid;
+			msg = msg.content.split(' ');
+			console.log('Message recieved from ' + message.author.id + ' at ' + Date.now().toString());
+
+			// Sets the userid for the recipiant
+			//userid = client.users.get('name', msg[1]).id;
+			userid = client.users.get(msg[1].replace('<@!', '').slice(0, -1))
+			// Sets the return time
+			timemeasure = msg[2].substring((msg[2].length - 1), (msg[2].length))
+			returntime = msg[2].substring(0, (msg[2].length - 1))
+
+			// Based off the delimiter, sets the time
+			switch (timemeasure) {
+				case 's':
+					returntime = returntime * 1000;
+					break;
+
+				case 'm':
+					returntime = returntime * 1000 * 60;
+					break;
+
+				case 'h':
+					returntime = returntime * 1000 * 60 * 60;
+					break;
+
+				case 'd':
+					returntime = returntime * 1000 * 60 * 60 * 24;
+					break;
+
+				default:
+					returntime = returntime * 1000;
+					break;
+			}
+
+			// Returns the Message
+			client.setTimeout(function () {
+				// Removes the first 2 array items
+				msg.shift();
+				msg.shift();
+				msg.shift();
+
+				// Creates the message
+				var content = msg.join();
+				content = content.replaceAll(',', ' ');
+				message.channel.send(userid + content);
+				console.log('Message sent to ' + userid + ' at ' + Date.now().toString());
+			}, returntime)
+		} catch (e) {
+			message.reply("An error has occured, please make sure the command has a time delimiter and message");
+			console.error(e.toString());
+		}
+
+	// List of Commands
+	} 
 
 });
 
