@@ -151,4 +151,4 @@ client.on('ready', () => {
 });
 
 // Login
-client.login();
+client.login(config.token);
