@@ -92,8 +92,8 @@ client.on('message', msg => {
 			console.log('Message recieved from ' + message.author.id + ' at ' + Date.now().toString());
 
 			// Sets the userid for the recipiant
-			//userid = client.users.get('name', msg[1]).id;
 			userid = client.users.get(msg[1].replace('<@!', '').slice(0, -1))
+			
 			// Sets the return time
 			timemeasure = msg[2].substring((msg[2].length - 1), (msg[2].length))
 			returntime = msg[2].substring(0, (msg[2].length - 1))
